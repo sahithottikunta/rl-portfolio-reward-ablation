@@ -1,0 +1,25 @@
+{
+  "tickers": [
+    "AAPL",
+    "MSFT",
+    "JPM",
+    "JNJ",
+    "XOM",
+    "AMZN",
+    "PG",
+    "UNH",
+    "NVDA",
+    "HD"
+  ],
+  "n_assets": 10,
+  "test_start": "2025-01-03",
+  "test_end": "2026-04-02",
+  "test_days": 312,
+  "bull_days": 229,
+  "bear_days": 83,
+  "ann_mean_ew": 0.09407972544431686,
+  "ann_vol_ew": 0.29726468307791776,
+  "ew_sharpe": 0.5929739308820755,
+  "window": 20,
+  "download_date": "2026-04-04"
+}

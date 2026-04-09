@@ -1,0 +1,52 @@
+{
+  "experiment": "EXP-01",
+  "seed": 42,
+  "n_assets": 5,
+  "n_days_train": 1000,
+  "n_days_test": 252,
+  "transaction_cost": 0.001,
+  "train_bull_days": 807,
+  "train_bear_days": 193,
+  "test_bull_days": 122,
+  "test_bear_days": 130,
+  "baselines": {
+    "equal_weight": {
+      "cumulative_return": 0.22406773364860344,
+      "annualized_return": 0.22114718571407918,
+      "annualized_volatility": 0.19485679261235808,
+      "sharpe_ratio": 1.1349216147369436,
+      "max_drawdown": -0.13928128032148748,
+      "final_portfolio_value": 1.2240677336486034
+    },
+    "min_variance": {
+      "cumulative_return": 0.18882375126178008,
+      "annualized_return": 0.18846860924977388,
+      "annualized_volatility": 0.17625068187068324,
+      "sharpe_ratio": 1.0693213055938986,
+      "max_drawdown": -0.09936830858955514,
+      "final_portfolio_value": 1.18882375126178
+    },
+    "max_sharpe": {
+      "cumulative_return": 0.4490628756668338,
+      "annualized_return": 0.3983989838506483,
+      "annualized_volatility": 0.23408455228300692,
+      "sharpe_ratio": 1.7019447886035048,
+      "max_drawdown": -0.12495211717841533,
+      "final_portfolio_value": 1.4490628756668338
+    }
+  },
+  "min_variance_weights": [
+    0.19358998943234565,
+    0.008393208606299399,
+    0.5318331227325226,
+    0.041789549481819496,
+    0.2243941297470128
+  ],
+  "max_sharpe_weights": [
+    1.0,
+    0.0,
+    1.497896356888765e-16,
+    0.0,
+    9.71445146547012e-17
+  ]
+}
