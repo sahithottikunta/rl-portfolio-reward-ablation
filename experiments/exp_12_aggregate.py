@@ -2,10 +2,14 @@
 EXP-12 Aggregator: combines partial results with existing n=3 seeds,
 computes statistics, saves final exp_12_results.json
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import json, numpy as np
 from scipy import stats
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
+RESULTS_DIR = _ROOT + "/results"
 
 # Load existing n=3 seed samples
 with open(f"{RESULTS_DIR}/exp_07_results.json") as f: r7  = json.load(f)

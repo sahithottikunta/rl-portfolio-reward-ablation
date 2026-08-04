@@ -2,10 +2,14 @@
 EXP-14 Aggregator: combines all TC-sweep batches into n=40 per lambda,
 runs Welch t-tests, Cohen d, bootstrap power, saves exp_14_results.json.
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import json, numpy as np, os
 from scipy import stats
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
+RESULTS_DIR = _ROOT + "/results"
 
 # ── λ=0.001 already complete from EXP-13 ─────────────────────────────────────
 with open(f"{RESULTS_DIR}/exp_13_results.json") as f: r13 = json.load(f)

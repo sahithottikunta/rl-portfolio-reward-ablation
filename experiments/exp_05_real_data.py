@@ -14,6 +14,10 @@ Test:  2022-01-01 – 2024-12-31 (~754 trading days)
 
 TC: 0.001 (10 bps, same as synthetic experiment for apples-to-apples)
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 
 import numpy as np
 import pandas as pd
@@ -25,8 +29,8 @@ except ImportError:
     os.system("pip install yfinance -q")
     import yfinance as yf
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-DATA_DIR    = "/home/user/workspace/research_output/data"
+RESULTS_DIR = _ROOT + "/results"
+DATA_DIR    = _ROOT + "/data"
 os.makedirs(RESULTS_DIR, exist_ok=True)
 os.makedirs(DATA_DIR, exist_ok=True)
 

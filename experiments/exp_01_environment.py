@@ -5,6 +5,10 @@ Purpose: Generate synthetic multi-asset return data using GBM with regime switch
          Max-Sharpe) as benchmarks.
 Random seed: 42
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 
 import numpy as np
 import pandas as pd
@@ -183,13 +187,13 @@ print(ms_perf)
 # ─────────────────────────────────────────────────────────────────────────────
 # 4. SAVE RESULTS & DATA
 # ─────────────────────────────────────────────────────────────────────────────
-os.makedirs("/home/user/workspace/research_output/results", exist_ok=True)
-os.makedirs("/home/user/workspace/research_output/data",    exist_ok=True)
+os.makedirs(_ROOT + "/results", exist_ok=True)
+os.makedirs(_ROOT + "/data",    exist_ok=True)
 
-np.save("/home/user/workspace/research_output/data/train_returns.npy", train_returns)
-np.save("/home/user/workspace/research_output/data/test_returns.npy",  test_returns)
-np.save("/home/user/workspace/research_output/data/train_regimes.npy", train_regimes)
-np.save("/home/user/workspace/research_output/data/test_regimes.npy",  test_regimes)
+np.save(_ROOT + "/data/train_returns.npy", train_returns)
+np.save(_ROOT + "/data/test_returns.npy",  test_returns)
+np.save(_ROOT + "/data/train_regimes.npy", train_regimes)
+np.save(_ROOT + "/data/test_regimes.npy",  test_regimes)
 
 results = {
     "experiment": "EXP-01",
@@ -211,7 +215,7 @@ results = {
     "max_sharpe_weights":   w_ms.tolist(),
 }
 
-with open("/home/user/workspace/research_output/results/exp_01_results.json", "w") as f:
+with open(_ROOT + "/results/exp_01_results.json", "w") as f:
     json.dump(results, f, indent=2)
 
 print("\nEXP-01 complete. Results saved.")

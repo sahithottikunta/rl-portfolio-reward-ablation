@@ -5,6 +5,10 @@ Usage: python3 exp_15_worker.py <lambda> <eta0> [seed_start] [seed_end_exclusive
   Saves: exp_15_tc{lambda}_eta{eta0}_{seed_start}_{seed_end-1}.json
   Skips if output file already exists.
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import sys, json, time, os
 import numpy as np
 import torch
@@ -20,8 +24,8 @@ SEED_START = int(sys.argv[3]) if len(sys.argv) > 3 else 42
 SEED_END   = int(sys.argv[4]) if len(sys.argv) > 4 else 52   # exclusive
 SEEDS      = list(range(SEED_START, SEED_END))
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-DATA_DIR    = "/home/user/workspace/research_output/data"
+RESULTS_DIR = _ROOT + "/results"
+DATA_DIR    = _ROOT + "/data"
 
 # Canonical filename uses 4-decimal lambda, 3-decimal eta
 def outfile(tc_str, eta_str, s, e):

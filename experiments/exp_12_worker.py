@@ -3,6 +3,10 @@ EXP-12 Worker: runs one config across seeds 45–51, saves partial JSON.
 Usage: python3 exp_12_worker.py <config_name>
   config_name in {fixed_dsr_tc, adaptive_k30, adaptive_k50}
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import sys, json, time, os
 import numpy as np
 import torch
@@ -12,8 +16,8 @@ from stable_baselines3 import PPO
 from scipy import stats
 
 CONFIG_NAME = sys.argv[1]
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-DATA_DIR    = "/home/user/workspace/research_output/data"
+RESULTS_DIR = _ROOT + "/results"
+DATA_DIR    = _ROOT + "/data"
 
 train_returns = np.load(f"{DATA_DIR}/real_train_returns.npy")
 test_returns  = np.load(f"{DATA_DIR}/real_test_returns.npy")

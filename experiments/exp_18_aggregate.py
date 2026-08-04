@@ -5,11 +5,15 @@ to produce n=150 final comparison for both configs.
 Target : lambda=0.0005, eta0=0.020
 Baseline: lambda=0.001,  eta0=0.010
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import json, glob, os
 import numpy as np
 from scipy import stats
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
+RESULTS_DIR = _ROOT + "/results"
 
 def load_sharpes_from_batches(prefix):
     """Load and concatenate sharpes from all batch files matching prefix."""

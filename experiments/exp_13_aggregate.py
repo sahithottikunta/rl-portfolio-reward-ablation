@@ -2,10 +2,14 @@
 EXP-13 Aggregator: combines n=10 (exp_12) + 30 new seeds (exp_13) = n=40 per config.
 Computes Welch t-test, Cohen d, bootstrap power, and saves exp_13_results.json.
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import json, numpy as np
 from scipy import stats
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
+RESULTS_DIR = _ROOT + "/results"
 
 # ── Load existing n=10 samples (from EXP-12) ─────────────────────────────────
 with open(f"{RESULTS_DIR}/exp_12_results.json") as f: r12 = json.load(f)

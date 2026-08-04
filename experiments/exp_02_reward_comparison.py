@@ -12,6 +12,10 @@ on training stability and out-of-sample Sharpe for a multi-asset regime-switchin
 
 Random seed: 42
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 
 import numpy as np
 import gymnasium as gym
@@ -30,7 +34,7 @@ torch.manual_seed(SEED)
 # ─────────────────────────────────────────────────────────────────────────────
 # Load data from EXP-01
 # ─────────────────────────────────────────────────────────────────────────────
-DATA_DIR = "/home/user/workspace/research_output/data"
+DATA_DIR = _ROOT + "/data"
 train_returns = np.load(f"{DATA_DIR}/train_returns.npy")
 test_returns  = np.load(f"{DATA_DIR}/test_returns.npy")
 N_ASSETS      = train_returns.shape[1]
@@ -188,7 +192,7 @@ def evaluate_agent(model, returns, tc=TC, window=WINDOW):
 REWARD_TYPES   = ['log_return', 'dsr', 'log_return_tc', 'dsr_tc']
 TOTAL_TIMESTEPS = 30_000
 N_RUNS          = 3   # multiple runs for statistical robustness
-RESULTS_DIR     = "/home/user/workspace/research_output/results"
+RESULTS_DIR     = _ROOT + "/results"
 
 all_results = {}
 training_curves = {}
@@ -235,7 +239,7 @@ for rtype in REWARD_TYPES:
 
         # Evaluate on test set
         import sys
-        sys.path.insert(0, '/home/user/workspace/research_output/experiments')
+        sys.path.insert(0, _ROOT + '/experiments')
         from exp_01_environment import portfolio_performance
 
         # collect weights on test env

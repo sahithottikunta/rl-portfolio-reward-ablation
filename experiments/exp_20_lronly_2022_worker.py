@@ -5,6 +5,10 @@ R_t = log(1 + net_portfolio_return_t)  [no TC, no DSR]
 Usage: python3 exp_20_lronly_2022_worker.py <seed_start> <seed_end_exclusive>
 Saves: results/exp_20_lronly_2022_{seed_start}_{seed_end-1}.json
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import sys, json, time, os
 import numpy as np
 import torch
@@ -16,8 +20,8 @@ SEED_START = int(sys.argv[1]) if len(sys.argv) > 1 else 42
 SEED_END   = int(sys.argv[2]) if len(sys.argv) > 2 else 52
 SEEDS      = list(range(SEED_START, SEED_END))
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-DATA_DIR    = "/home/user/workspace/research_output/data"
+RESULTS_DIR = _ROOT + "/results"
+DATA_DIR    = _ROOT + "/data"
 
 outpath = f"{RESULTS_DIR}/exp_20_lronly_2022_{SEED_START}_{SEED_END-1}.json"
 if os.path.exists(outpath):
