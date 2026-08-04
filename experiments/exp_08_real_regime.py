@@ -6,13 +6,17 @@ significance tests for all four reward formulations on real market data.
 
 Uses the rolling 60-day mean return threshold from EXP-05 for regime labels.
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 
 import numpy as np
 import json, os
 from scipy import stats
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-DATA_DIR    = "/home/user/workspace/research_output/data"
+RESULTS_DIR = _ROOT + "/results"
+DATA_DIR    = _ROOT + "/data"
 
 # ── Load data ─────────────────────────────────────────────────────────────────
 test_returns   = np.load(f"{DATA_DIR}/real_test_returns.npy")

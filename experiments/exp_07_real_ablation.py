@@ -10,6 +10,10 @@ Architecture: identical to synthetic experiment for apples-to-apples comparison.
   - Timesteps: 30,000 per run (same as synthetic)
   - Seeds: 42, 43, 44 (same seeds)
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 
 import numpy as np
 import json, os, sys, time
@@ -19,8 +23,8 @@ from gymnasium import spaces
 from stable_baselines3 import PPO
 import torch
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-DATA_DIR    = "/home/user/workspace/research_output/data"
+RESULTS_DIR = _ROOT + "/results"
+DATA_DIR    = _ROOT + "/data"
 
 # ── Load data ─────────────────────────────────────────────────────────────────
 train_returns = np.load(f"{DATA_DIR}/real_train_returns.npy")

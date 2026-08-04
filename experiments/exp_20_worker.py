@@ -18,6 +18,10 @@ Usage: python3 exp_20_worker.py <k> <test_period> <seed_start> <seed_end_exclusi
   Saves: results/exp_20_k{k}_{test_period}_{seed_start}_{seed_end-1}.json
   Skips if output file already exists.
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import sys, json, time, os
 import numpy as np
 import torch
@@ -31,8 +35,8 @@ SEED_START  = int(sys.argv[3]) if len(sys.argv) > 3 else 42
 SEED_END    = int(sys.argv[4]) if len(sys.argv) > 4 else 52
 SEEDS       = list(range(SEED_START, SEED_END))
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-DATA_DIR    = "/home/user/workspace/research_output/data"
+RESULTS_DIR = _ROOT + "/results"
+DATA_DIR    = _ROOT + "/data"
 
 K_STR = str(int(K_VAL)) if K_VAL == int(K_VAL) else str(K_VAL)
 outpath = f"{RESULTS_DIR}/exp_20_k{K_STR}_{TEST_PERIOD}_{SEED_START}_{SEED_END-1}.json"

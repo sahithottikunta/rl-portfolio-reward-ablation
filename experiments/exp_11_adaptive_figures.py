@@ -10,6 +10,10 @@ fig_12: η_t time-series trace (seed 42, best config κ=30 DSR+TC) overlaid
 fig_13: Cumulative wealth — best adaptive DSR+TC (κ=30, seed 42) vs.
          fixed DSR+TC (seed 42) vs. EW baseline, with bear shading
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 
 import numpy as np
 import json, os
@@ -18,8 +22,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
-FIGURES_DIR = "/home/user/workspace/research_output/figures"
-RESULTS_DIR = "/home/user/workspace/research_output/results"
+FIGURES_DIR = _ROOT + "/figures"
+RESULTS_DIR = _ROOT + "/results"
 
 with open(f"{RESULTS_DIR}/exp_07_results.json") as f: r7  = json.load(f)
 with open(f"{RESULTS_DIR}/exp_10_results.json") as f: r10 = json.load(f)
@@ -113,7 +117,7 @@ print("fig_11 saved")
 eta_trace = np.array(r10["eta_traces"]["dsr_tc_k30"])
 
 # Also build market vol series from test returns
-test_returns = np.load("/home/user/workspace/research_output/data/real_test_returns.npy")
+test_returns = np.load(_ROOT + "/data/real_test_returns.npy")
 mean_ret = test_returns.mean(axis=1)           # cross-asset mean daily return
 VOLWIN = r10["volwin"]                         # 10
 roll_vol = np.array([

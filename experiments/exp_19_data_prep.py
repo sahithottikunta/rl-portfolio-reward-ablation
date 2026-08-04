@@ -6,13 +6,17 @@ Saves:
   data/exp19_test_dates.npy      — (T_new,) string dates
   data/exp19_metadata.json       — date range, regime stats, VIX proxy
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import numpy as np
 import json
 import yfinance as yf
 from datetime import datetime
 
 TICKERS = ['AAPL', 'MSFT', 'JPM', 'JNJ', 'XOM', 'AMZN', 'PG', 'UNH', 'NVDA', 'HD']
-DATA_DIR = '/home/user/workspace/research_output/data'
+DATA_DIR = _ROOT + '/data'
 
 START = '2025-01-01'
 END   = '2026-04-04'

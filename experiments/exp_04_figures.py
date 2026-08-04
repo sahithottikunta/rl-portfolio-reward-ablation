@@ -1,6 +1,10 @@
 """
 EXP-04: Figure Generation (v2 — improved label placement)
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 
 import numpy as np
 import matplotlib
@@ -9,8 +13,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import json, os
 
-FIGURES_DIR = "/home/user/workspace/research_output/figures"
-RESULTS_DIR = "/home/user/workspace/research_output/results"
+FIGURES_DIR = _ROOT + "/figures"
+RESULTS_DIR = _ROOT + "/results"
 os.makedirs(FIGURES_DIR, exist_ok=True)
 
 with open(f"{RESULTS_DIR}/exp_01_results.json") as f: r1 = json.load(f)

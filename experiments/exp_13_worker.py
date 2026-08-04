@@ -4,6 +4,10 @@ Usage: python3 exp_13_worker.py <config_name> <seed_start> <seed_end>
   config_name in {fixed_dsr_tc, adaptive_k30, adaptive_k50}
   seeds [seed_start, seed_end) exclusive upper bound
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import sys, json, time, os
 import numpy as np
 import torch
@@ -16,8 +20,8 @@ SEED_START  = int(sys.argv[2])
 SEED_END    = int(sys.argv[3])
 SEEDS       = list(range(SEED_START, SEED_END))
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-DATA_DIR    = "/home/user/workspace/research_output/data"
+RESULTS_DIR = _ROOT + "/results"
+DATA_DIR    = _ROOT + "/data"
 
 train_returns = np.load(f"{DATA_DIR}/real_train_returns.npy")
 test_returns  = np.load(f"{DATA_DIR}/real_test_returns.npy")

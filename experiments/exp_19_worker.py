@@ -13,6 +13,10 @@ Usage: python3 exp_19_worker.py <config_name> <seed_start> <seed_end_exclusive>
   Saves: results/exp_19_{config}_{seed_start}_{seed_end-1}.json
   Skips if output file already exists.
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import sys, json, time, os
 import numpy as np
 import torch
@@ -25,8 +29,8 @@ SEED_START  = int(sys.argv[2]) if len(sys.argv) > 2 else 42
 SEED_END    = int(sys.argv[3]) if len(sys.argv) > 3 else 52
 SEEDS       = list(range(SEED_START, SEED_END))
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-DATA_DIR    = "/home/user/workspace/research_output/data"
+RESULTS_DIR = _ROOT + "/results"
+DATA_DIR    = _ROOT + "/data"
 
 outpath = f"{RESULTS_DIR}/exp_19_{CONFIG_NAME}_{SEED_START}_{SEED_END-1}.json"
 if os.path.exists(outpath):

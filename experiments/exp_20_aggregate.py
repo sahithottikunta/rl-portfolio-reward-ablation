@@ -13,6 +13,10 @@ Baselines (from prior experiments):
 All Welch t-tests are two-tailed.
 Cohen's d = (mean_A - mean_B) / pooled_std.
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 
 import json, glob, os
 import numpy as np
@@ -22,8 +26,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-FIGURES_DIR = "/home/user/workspace/research_output/figures"
+RESULTS_DIR = _ROOT + "/results"
+FIGURES_DIR = _ROOT + "/figures"
 os.makedirs(FIGURES_DIR, exist_ok=True)
 
 # ── Load all EXP-20 batch files ────────────────────────────────────────────

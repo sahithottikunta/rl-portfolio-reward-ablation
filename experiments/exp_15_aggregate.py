@@ -6,14 +6,18 @@ Grid:
   lambdas: [0.0005, 0.001, 0.002, 0.005]
   etas:    [0.002,  0.005, 0.010, 0.020, 0.050]
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import json, numpy as np, os, itertools, sys
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from scipy import stats
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-FIGURES_DIR = "/home/user/workspace/research_output/figures"
+RESULTS_DIR = _ROOT + "/results"
+FIGURES_DIR = _ROOT + "/figures"
 SEEDS       = list(range(42, 52))   # n=10 per cell
 
 LAMBDAS = [0.0005, 0.001, 0.002, 0.005]

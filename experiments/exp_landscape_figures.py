@@ -6,6 +6,10 @@ Figures produced:
   fig_18_landscape_lambda.png  — mean SR vs λ across η₀ values (line plot)
   fig_19_power_curve.png       — bootstrap power vs n for detecting d=0.51 (mean-optimal gap)
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import json, numpy as np, os
 import matplotlib
 matplotlib.use('Agg')
@@ -13,8 +17,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patheffects as pe
 from scipy import stats
 
-R = '/home/user/workspace/research_output/results'
-FIGURES_DIR = '/home/user/workspace/research_output/figures'
+R = _ROOT + '/results'
+FIGURES_DIR = _ROOT + '/figures'
 
 # ── Load all data ────────────────────────────────────────────────────────────
 with open(f'{R}/exp_13_results.json') as f:

@@ -1,4 +1,4 @@
-# Reward Function Design for Deep RL Portfolio Optimization
+# Reward Design for Deep RL Portfolio Optimization is Regime-Conditional
 
 [![Paper](https://img.shields.io/badge/Paper-PDF%20%2820%20pages%29-blue?logo=adobeacrobatreader)](paper.pdf)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
@@ -7,8 +7,8 @@
 [![Stable Baselines3](https://img.shields.io/badge/SB3-PPO-blueviolet)](https://stable-baselines3.readthedocs.io)
 [![Status](https://img.shields.io/badge/Experiments-930%20runs%20%E2%9C%93-brightgreen)]()
 
-> **"Reward Function Design for Deep Reinforcement Learning Portfolio Optimization:  
-> A Comparative Ablation Study Under Regime-Switching Market Conditions"**
+> **"Reward Design for Deep Reinforcement Learning Portfolio Optimization is  
+> Regime-Conditional: A Replication Study Across Bear and Bull Markets"**
 
 This repository contains the complete research code, data, results, and LaTeX source for a 20-page IEEE-format paper conducting a systematic ablation study of reward function design for deep RL portfolio optimisation. All results are real and reproducible — every number in the paper comes from code in this repository.
 
@@ -32,11 +32,13 @@ This repository contains the complete research code, data, results, and LaTeX so
 
 1. **Reward function choice is regime-conditional.** DSR+TC achieves SR = 0.391 ± 0.363 in the 2022–2024 bear market; LR-only achieves SR = 0.523 ± 0.576 in the 2025–2026 bull market. No single reward dominates across both regimes (cross-period shift: *t* = −6.14, *p* < 10⁻⁷, Cohen's *d* = −1.03).
 
-2. **DSR+TC is the most stable reward in bear markets.** Across n = 150 seeds on 2022–2024 S&P 500 data, DSR+TC (η = 0.010, λ = 0.001) achieves SR = 0.391 ± 0.363. The winner's-curse trajectory across three confirmatory stages (d = +0.51 → +0.30 → +0.17) shows the advantage shrinks with sample size but remains positive.
+2. **Transaction-cost magnitude dominates transaction-cost presence.** A four-level λ sweep (n = 40 each) yields a monotone decline in mean SR from 0.455 (λ = 0.001) to −0.073 (λ = 0.050), reaching *d* = −1.05 (*p* < 0.001, power > 0.99) — the strongest effect measured in this study, larger than any individual reward-component contrast.
 
-3. **Transaction-cost penalty reverses sign in bull markets.** Adding TC penalty (λ > 0) reduces Sharpe ratio by Cohen's *d* > 1.0 in the 2025–2026 period, because the penalisation discourages trend-following rebalancing that is rewarded in bull conditions.
+3. **Apparent reward advantages do not survive replication.** The configuration nominated as optimal by a 10-seed grid search decays monotonically under confirmation (*d* = +0.51 → +0.30 at n = 75 → +0.17 at n = 150, *p* = 0.144), never reaching significance — a textbook winner's curse.
 
-4. **RSMO blending is a well-replicated null.** A regime-switching multi-objective reward (R_t = α_t · LR + (1−α_t) · DSR+TC, α_t = σ(k · μ̂⁶⁰ᵈ)) underperforms both constituent baselines on both test periods across k ∈ {2, 5, 10}, n ≥ 40 seeds. Root cause: the 60-day rolling mean misclassifies the 2022 bear market as bullish (ᾱ_t ∈ [0.56, 0.68]).
+4. **Transaction-cost penalty reverses sign in bull markets.** Adding TC penalty (λ > 0) reduces Sharpe ratio by Cohen's *d* > 1.0 in the 2025–2026 period, because the penalisation discourages trend-following rebalancing that is rewarded in bull conditions.
+
+5. **RSMO blending is a well-replicated null.** A regime-switching multi-objective reward (R_t = α_t · LR + (1−α_t) · DSR+TC, α_t = σ(k · μ̂⁶⁰ᵈ)) underperforms both constituent baselines on both test periods across k ∈ {2, 5, 10}, n ≥ 40 seeds. Root cause: the 60-day rolling mean misclassifies the 2022 bear market as bullish (ᾱ_t ∈ [0.56, 0.68]).
 
 ---
 
@@ -51,7 +53,31 @@ This repository contains the complete research code, data, results, and LaTeX so
 | R3: LR + TC penalty | 1.072 | 0.431 | 22.7% |
 | **R4: DSR + TC (default)** | **1.011** | **0.097** | **19.5%** |
 
-DSR+TC achieves the **lowest variance** (std = 0.097), a 54% reduction vs. LR-only.
+DSR+TC achieves the **lowest variance** (std = 0.097), a 68% reduction vs. LR-only.
+
+> ⚠️ **Read this table as indicative, not conclusive.** It rests on n = 3 seeds.
+> The n ≥ 40 experiments below (EXP-14 onward) show that differences of this
+> magnitude are not reliably separable from seed noise on real data. The paper's
+> load-bearing results are EXP-14, EXP-18, EXP-19 and EXP-20.
+
+---
+
+### Known issue — EXP-07 identifies three configurations, not four
+
+`exp_07_real_ablation.py` constructs the training environment with `tc=TC` for
+every reward type, so the transaction cost is applied to the realised return in
+all branches. The `log_return` and `log_return_tc` branches therefore reduce to
+the same objective and produce **bit-identical runs** — visible in
+`results/exp_07_results.json`, where both report `sharpe_mean = 0.2128969395…`.
+
+EXP-07 accordingly yields three distinct configurations (LR, DSR, DSR+TC), not
+four, and EXP-08 inherits the duplicate rows because it reads EXP-07's stored
+returns. The LR vs. LR+TC contrast is instead evaluated properly at n = 60 in
+**EXP-19**, where the two differ substantially (+0.523 vs. −0.317).
+
+This does **not** affect EXP-02/EXP-03 (synthetic), which apply the cost
+conditionally via `tc=TC if 'tc' in rtype else 0.0`, nor EXP-14 through EXP-20,
+which define each configuration explicitly.
 
 ---
 
@@ -202,6 +228,13 @@ brew install --cask mactex
 
 All experiments run sequentially; each saves its output to `results/` before the next reads it.  
 Batch workers use 10-seed chunks to stay within ~300 s wall-clock time per invocation.
+
+Scripts resolve `data/`, `results/` and `figures/` relative to the repository
+root, so they run from any checkout directory. Set `RESEARCH_ROOT` to override:
+
+```bash
+export RESEARCH_ROOT=/path/to/rl-portfolio-reward-ablation   # optional
+```
 
 ### Step 0 — Clone and install
 
@@ -436,11 +469,11 @@ Data is downloaded via `yfinance` and cached as `.npy` arrays. The `exp19_data_p
 ## Citation
 
 ```bibtex
-@article{ottikunta2026reward,
-  title   = {Reward Function Design for Deep Reinforcement Learning Portfolio
-             Optimization: A Comparative Ablation Study Under Regime-Switching
-             Market Conditions},
-  author  = {Ottikunta, Sahith},
+@article{reward2026regimeconditional,
+  title   = {Reward Design for Deep Reinforcement Learning Portfolio
+             Optimization is Regime-Conditional: A Replication Study
+             Across Bear and Bull Markets},
+  author  = {TODO: author list},
   year    = {2026},
   note    = {Preprint. Code: https://github.com/sahithottikunta/rl-portfolio-reward-ablation}
 }
@@ -450,7 +483,11 @@ Data is downloaded via `yfinance` and cached as `.npy` arrays. The `exp19_data_p
 
 ## Author Note
 
-The author name field in `paper.tex` (line ~41) currently reads `Author Name (To Be Filled)` — replace with your name before submission.
+The `\author{...}` block in `paper.tex` is a two-author scaffold with
+placeholder fields (`FIRST AUTHOR`, `AFFILIATION`, …) marked by a
+`TODO(authors)` comment. Fill both blocks — or delete the second `\and` block
+for a single author — before submission. arXiv requires the author list in the
+source to match the one entered in the submission form.
 
 ---
 

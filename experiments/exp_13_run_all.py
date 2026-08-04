@@ -3,6 +3,10 @@ EXP-13 Master runner: runs all pending batches sequentially,
 skipping any that already have a saved results file.
 Saves each (config, seed_range) batch immediately on completion.
 """
+import os as _os
+# Repo-relative root; override with the RESEARCH_ROOT environment variable.
+_ROOT = _os.environ.get("RESEARCH_ROOT") or _os.path.dirname(
+    _os.path.dirname(_os.path.abspath(__file__)))
 import sys, json, time, os
 import numpy as np
 import torch
@@ -10,8 +14,8 @@ import gymnasium as gym
 from gymnasium import spaces
 from stable_baselines3 import PPO
 
-RESULTS_DIR = "/home/user/workspace/research_output/results"
-DATA_DIR    = "/home/user/workspace/research_output/data"
+RESULTS_DIR = _ROOT + "/results"
+DATA_DIR    = _ROOT + "/data"
 
 train_returns = np.load(f"{DATA_DIR}/real_train_returns.npy")
 test_returns  = np.load(f"{DATA_DIR}/real_test_returns.npy")
