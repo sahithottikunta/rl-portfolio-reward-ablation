@@ -1,8 +1,9 @@
 % ============================================================
-% DSR-TC: Reward Function Ablation for Deep Reinforcement Learning
-%         Portfolio Optimization Under Regime-Switching Markets
+% Reward Design for Deep Reinforcement Learning Portfolio
+% Optimization is Regime-Conditional: A Replication Study
+% Across Bear and Bull Markets
 % IEEE Research Paper Format
-% AUTHOR: [TO BE FILLED BY HUMAN]
+% AUTHORS: see \author{} block below -- TODO before submission
 % ============================================================
 
 \documentclass[conference]{IEEEtran}
@@ -34,40 +35,57 @@
 % ============================================================
 \begin{document}
 
-\title{Reward Function Design for Deep Reinforcement Learning\\
-Portfolio Optimization: A Comparative Ablation Study\\
-Under Regime-Switching Market Conditions}
+\title{Reward Design for Deep Reinforcement Learning Portfolio\\
+Optimization is Regime-Conditional: A Replication Study\\
+Across Bear and Bull Markets}
 
-\author{\IEEEauthorblockN{Author Name (To Be Filled)}
-\IEEEauthorblockA{\textit{Department of Computer Science} \\
-Institution To Be Filled\\
-email@institution.edu}
+% ---------------------------------------------------------------
+% TODO(authors): replace both blocks before submission. Delete the
+% second \and block if there is only one author. arXiv requires the
+% author list here to match the one entered in the submission form.
+% ---------------------------------------------------------------
+\author{\IEEEauthorblockN{FIRST AUTHOR}
+\IEEEauthorblockA{\textit{AFFILIATION} \\
+CITY, COUNTRY \\
+EMAIL}
+\and
+\IEEEauthorblockN{SECOND AUTHOR}
+\IEEEauthorblockA{\textit{AFFILIATION} \\
+CITY, COUNTRY \\
+EMAIL}
 }
 
 \maketitle
 
 % ============================================================
 \begin{abstract}
-Deep reinforcement learning (DRL) has emerged as a powerful framework for
-dynamic portfolio optimization, yet a critical and underexplored design choice
-remains the reward function. While prior work separately studies the Differential
-Sharpe Ratio (DSR) and transaction cost penalties as reward components, no study
-systematically isolates their \emph{joint} effect on training stability and
-out-of-sample risk-adjusted performance in a regime-switching market. We address
-this gap by conducting a controlled ablation study of four reward formulations
-for Proximal Policy Optimization (PPO)-based portfolio agents on a five-asset
-synthetic market with two-regime Geometric Brownian Motion dynamics: (R1) log
-return, (R2) DSR alone, (R3) log return with transaction cost penalty, and (R4)
-DSR with transaction cost penalty (our proposed formulation). Experiments are
-executed with full code, fixed random seeds, and three independent runs per
-configuration. Our key finding is that the DSR+TC reward achieves the lowest
-cross-seed Sharpe ratio standard deviation of $0.097$ compared to $0.305$ for
-plain log return and $0.431$ for log return with transaction cost, indicating a
-39.4\% improvement in training stability over the best competing formulation.
-Regime-conditional analysis reveals that DSR+TC agents reduce portfolio
-turnover by 36.9\% relative to the DSR-only baseline, confirming that joint
-reward design suppresses unnecessary rebalancing. All experimental code,
-results, and figures are provided for full reproducibility.
+Deep reinforcement learning (DRL) is increasingly applied to dynamic portfolio
+optimization, yet the reward function---arguably the most consequential design
+choice---is typically selected by convention rather than by evidence. We report
+a large-scale empirical study of reward design for Proximal Policy Optimization
+(PPO) portfolio agents, comprising 930 training runs across a two-regime
+synthetic market and ten S\&P~500 constituents evaluated on two disjoint
+out-of-sample periods: 2022--2024 (bear-dominated) and 2025--2026
+(bull-dominated). We ablate four reward formulations---log return and the
+Differential Sharpe Ratio (DSR), each with and without transaction-cost (TC)
+penalization---and sweep the TC coefficient $\lambda$ and the DSR adaptation
+rate $\eta_0$. Three findings emerge. First, TC \emph{magnitude}, not TC
+presence, dominates: mean Sharpe declines monotonically from $0.455$
+($\lambda=0.001$) to $-0.073$ ($\lambda=0.050$), reaching Cohen $d=-1.05$
+($p<0.001$, power $>0.99$) and outweighing the effect of any individual
+reward-component contrast. Second, apparent reward advantages do not survive
+replication: the best cell of a 10-seed grid search shrinks from $d=+0.51$ to
+$d=+0.30$ at $n=75$ and $d=+0.17$ at $n=150$ ($p=0.144$)---a textbook
+winner's-curse trajectory. Third, and most consequential, the reward ranking is
+regime-conditional and reverses out of sample: DSR+TC leads in 2022--2024
+(SR$\,=0.391$) but collapses in 2025--2026 (SR$\,=-0.115$), where LR-only leads
+(SR$\,=+0.523$; $d=+1.09$). A regime-switching reward that blends the two via a
+sigmoid gate on the 60-day mean return fails to recover either constituent
+($n\geq40$ per cell, all $p<0.01$), because the gating signal misclassifies the
+2022 bear market. We conclude that no reward formulation dominates across
+regimes, and that reward-design claims validated on a single period with few
+seeds are unreliable. All code, data, and results are released for
+reproducibility.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -108,17 +126,30 @@ performance.}
 
 This paper addresses precisely that gap. Our contributions are:
 \begin{enumerate}
-    \item We formulate a four-way reward function ablation—log return (R1), DSR
-    alone (R2), log return with TC penalty (R3), and DSR with TC penalty (R4)—and
-    evaluate all configurations under identical experimental conditions.
-    \item We demonstrate that DSR+TC yields the lowest cross-seed Sharpe ratio
-    standard deviation (0.097), representing a 39.4\% stability improvement over
-    the best single-component reward (R3: 0.431 std).
-    \item We provide regime-conditional (bull vs.\ bear) breakdowns and portfolio
-    turnover analysis, revealing that DSR+TC reduces daily rebalancing by 36.9\%
-    versus DSR-only and by 37.0\% versus log return.
-    \item All experiments are reproducible from provided code with fixed random
-    seed 42 and documented hardware environment.
+    \item We formulate a four-way reward function ablation---log return (R1), DSR
+    alone (R2), log return with TC penalty (R3), and DSR with TC penalty (R4)---and
+    evaluate all configurations under identical experimental conditions on both a
+    two-regime synthetic market and real S\&P~500 data.
+    \item We show that transaction-cost \emph{magnitude} is the dominant design
+    variable. A four-level sweep ($n=40$ seeds each) yields a monotone decline in
+    mean Sharpe from $0.455$ ($\lambda=0.001$) to $-0.073$ ($\lambda=0.050$),
+    with $d=-1.05$ ($p<0.001$, power $>0.99$)---a far larger effect than the
+    presence or absence of any individual reward component.
+    \item We demonstrate, through a sequential replication at $n=10 \to 75 \to
+    150$ seeds, that the most promising configuration identified by grid search
+    is a winner's curse: its advantage shrinks monotonically ($d=+0.51 \to +0.30
+    \to +0.17$) and never attains significance. We pair this with a power
+    analysis establishing that the accompanying null results are true negatives.
+    \item We establish that reward ranking is \emph{regime-conditional}. On a
+    held-out 2025--2026 bull-dominated period, the 2022--2024 ranking reverses
+    entirely: DSR+TC falls from SR$\,=0.391$ to $-0.115$ while LR-only reaches
+    $+0.523$ ($d=+1.09$, $p<0.001$; cross-period shift $d=-1.03$, $p<10^{-7}$).
+    \item We test the natural remedy---a regime-switching multi-objective reward
+    that gates between the two constituents---and report a well-replicated null
+    ($n\geq40$ per cell, all $p<0.01$), tracing the failure to miscalibration of
+    the 60-day regime signal rather than to the blending principle itself.
+    \item All 930 training runs are reproducible from provided code, data, and
+    fixed seeds; results and figures are released in full.
 \end{enumerate}
 
 The remainder of the paper is organized as follows. Section~\ref{sec:related}
@@ -162,6 +193,16 @@ stochastic model-free approach achieving a 63.1\% annualized return with reduced
 drawdown during the 2020 market crash. Hierarchical methods using DRL alongside
 Hierarchical Risk Parity have been explored by Edalat and Millea~\cite{Edalat2023HRP}.
 
+A parallel line of work targets the state representation rather than the
+learning algorithm. Zhang et al.~\cite{Zhang2020DLPortfolio} optimize portfolio
+weights directly from price series with deep networks; Yashaswi~\cite{Yashaswi2021LFSS}
+compresses market history into a latent feature state space; and Dong et
+al.~\cite{Dong2021Factor} learn factor representations for decision making in
+equity markets. Yu et al.~\cite{Yu2019ModelBased} instead adopt a model-based
+formulation, learning market dynamics to plan allocations over a horizon, and
+Cui et al.~\cite{Cui2024HyperHeuristic} approach the multi-period problem with a
+DRL hyper-heuristic that selects among low-level allocation strategies.
+
 Recent work has also integrated Black-Litterman priors~\cite{Sun2024BlackLitterman},
 knowledge distillation from Markowitz theory~\cite{Hu2024Markowitz}, and
 Transformer-based architectures for temporal attention~\cite{Xue2025Attention}.
@@ -169,6 +210,16 @@ Multi-agent architectures for heterogeneous portfolio management have been
 developed to capture complex asset dependencies~\cite{Zhang2025GraphRL}.
 Industry-grade pipelines with rigorous statistical methodology have been proposed
 by Ndikum and Ndikum~\cite{Ndikum2024Industry}.
+
+Reproducibility infrastructure is directly relevant to the present study. The
+FinRL library~\cite{Liu2020FinRL} and its FinRL-Meta
+extension~\cite{Liu2021FinRLMeta} provide standardized market environments and
+benchmarks, reflecting a growing recognition that DRL finance results are
+sensitive to environment details and difficult to compare across papers. Our
+findings on seed variance (Sections~\ref{sec:landscape}--\ref{sec:rsmo})
+reinforce that concern: without standardized environments \emph{and} adequate
+seed counts, reported advantages are not reliably attributable to the design
+choice under study.
 
 \subsection{Reward Function Design}
 Reward design is central to DRL performance but receives comparatively little
@@ -181,6 +232,19 @@ reward with transaction cost scheduling, showing gains on bond/equity portfolios
 Zhang et al.~\cite{Huang2025DRLChina} introduced a novel Sharpe ratio reward
 function for actor-critic algorithms. Ma et al.~\cite{Ma2025SelfAdaptiveReward}
 proposed self-adaptive reward shaping for sparse reward settings.
+
+Risk sensitivity is the most common motivation for departing from a plain return
+reward. Wang and Liu~\cite{Wang2025ART} develop a risk-sensitive objective that
+penalizes downside dispersion, while Acero et al.~\cite{Acero2024ESG} combine
+DRL with mean-variance strategies under responsible-investment constraints. Huang et
+al.~\cite{Huang2024EvalDRL} evaluate DRL agents in a long-short setting where
+the reward must account for both sides of the book. Closest in spirit to our
+Section~\ref{sec:rsmo} is Choudhary et al.~\cite{Choudhary2025MultiReward},
+who combine several risk-adjusted terms into a composite multi-reward objective
+and report gains over single-term baselines. Our RSMO experiment tests the same
+premise---that constituent rewards can be productively blended---under a regime
+gate, and reaches a negative result, which we trace to the calibration of the
+gating signal rather than to the composition principle itself.
 
 Critically, while these works \emph{use} reward functions, none conducts a
 controlled ablation comparing the isolated and joint effects of DSR and transaction
@@ -673,14 +737,22 @@ out-of-sample Sharpe ratios across three seeds for each reward type.
 \toprule
 Reward & SR mean & SR std & Cum.\ Ret & Ann.\ Vol & Turnover \\
 \midrule
-R1: LR         & 0.213 & 0.365 & 0.103 & 0.205 & 0.454 \\
+R1/R3: LR$^{\dagger}$ & 0.213 & 0.365 & 0.103 & 0.205 & 0.454 \\
 R2: DSR        & $-$0.139 & 0.830 & $-$0.033 & 0.212 & 0.779 \\
-R3: LR+TC      & 0.213 & 0.365 & 0.103 & 0.205 & 0.454 \\
 R4: DSR+TC     & \textbf{0.451} & 0.522 & \textbf{0.445} & 0.301 & 0.629 \\
 \midrule
 EW (1/N)       & 0.700 & {---} & 0.379 & 0.197 & {---} \\
 \bottomrule
 \end{tabular}}
+\begin{flushleft}
+\footnotesize $^{\dagger}$In EXP-07 the training environment applies the
+transaction cost to the realised return for every reward type, so the R1 and
+R3 branches reduce to the same objective and produce identical runs. This
+period therefore yields three distinct configurations, not four; the LR
+vs.\ LR+TC contrast is instead evaluated at $n=60$ in EXP-19
+(Section~\ref{sec:post2024}), where the two differ substantially
+($+0.523$ vs.\ $-0.317$).
+\end{flushleft}
 \end{table}
 
 \begin{figure}[t]
@@ -695,10 +767,12 @@ among DRL agents but at higher variance than on synthetic data.}
 DSR+TC yields the highest mean Sharpe ratio of 0.451 among DRL
 agents—more than double LR (0.213)—and the highest cumulative return
 (44.5\%). However, on real data the \emph{stability ranking reverses}:
-DSR+TC's cross-seed Sharpe std is 0.522, versus 0.365 for both LR
-and LR+TC. DSR alone suffers the most (std = 0.830), including a
-catastrophic $-$1.313 Sharpe for seed 43, driven by runaway turnover
-(daily TO = 1.558).
+DSR+TC's cross-seed Sharpe std is 0.522, versus 0.365 for LR. DSR alone
+suffers the most (std = 0.830), including a catastrophic $-$1.313 Sharpe
+for seed 43, driven by runaway turnover (daily TO = 1.558). These
+differences rest on three seeds and should be read as indicative only;
+Section~\ref{subsec:confirm_mean_optimal} shows that effects of this size
+are not separable from seed noise at small $n$ on real data.
 
 \begin{figure}[t]
 \centering
@@ -723,8 +797,8 @@ between the synthetic GBM and real S\&P~500 experiments.
 \includegraphics[width=\columnwidth]{figures/fig_09_stability_comparison.png}
 \caption{Training stability (Sharpe std, lower = more stable) for
 synthetic GBM vs.\ real S\&P~500. DSR+TC's stability advantage is clear
-on synthetic data but does not hold on real data, where LR and LR+TC
-are more consistent.}
+on synthetic data but does not hold on real data, where LR is more
+consistent.}
 \label{fig:stability_cmp}
 \end{figure}
 
@@ -740,10 +814,14 @@ Reward & Synthetic std & Real std \\
 \midrule
 R1: LR     & 0.305 & 0.365 \\
 R2: DSR    & 0.106 & 0.830 \\
-R3: LR+TC  & 0.431 & 0.365 \\
+R3: LR+TC  & 0.431 & {---}$^{\dagger}$ \\
 R4: DSR+TC & \textbf{0.097} & 0.522 \\
 \bottomrule
 \end{tabular}
+\begin{flushleft}
+\footnotesize $^{\dagger}$Not separately identified on real data; see the
+note to Table~\ref{tab:real_ablation}.
+\end{flushleft}
 \end{table}
 
 On real data, DSR+TC's std increases from 0.097 to 0.522. Two factors
@@ -757,9 +835,9 @@ slowly, causing the gradient signal to lag market conditions.
 Notably, DSR alone (R2) degrades catastrophically on real data
 (std = 0.830 vs.\ 0.106 on synthetic), confirming that the TC component
 in DSR+TC provides crucial stabilization even when full stability is not
-preserved. LR and LR+TC maintain similar stability across both settings
-(synthetic 0.305/0.431 vs.\ real 0.365/0.365), suggesting that simpler
-reward signals are more robust to distributional shift.
+preserved. LR maintains comparable stability across both settings
+(synthetic 0.305 vs.\ real 0.365), suggesting that simpler reward signals
+are more robust to distributional shift.
 
 \subsection{Regime-Conditional Analysis (Real Data)}
 
@@ -801,8 +879,8 @@ more complex return structure of real markets.
 \includegraphics[width=\columnwidth]{figures/fig_10_turnover_comparison.png}
 \caption{Portfolio turnover: synthetic GBM vs.\ real S\&P~500.
 All rewards show higher turnover on real data, reflecting the more
-complex return structure. TC-penalized rewards (R3, R4) show relatively
-lower real-data turnover compared to non-penalized rewards.}
+complex return structure. The TC-penalized DSR reward (R4) shows lower
+real-data turnover than DSR alone.}
 \label{fig:turnover_cmp}
 \end{figure}
 
@@ -825,7 +903,7 @@ One finding does \emph{not} transfer:
 \begin{enumerate}
     \setcounter{enumi}{3}
     \item \textbf{DSR+TC is not the most stable on real data}.
-    LR and LR+TC achieve lower cross-seed std (0.365 each) on real
+    LR achieves a lower cross-seed std (0.365) on real
     data. We attribute this to EMA parameter sensitivity: the fixed
     $\eta=0.01$ optimized implicitly for the synthetic GBM frequency
     does not adapt to real-market heavy tails. Adaptive $\eta$ scheduling
@@ -858,18 +936,19 @@ of where each reward formulation succeeds and fails.
 \toprule
 Reward & Bull SR & Bull Vol & Bear SR & Bear Vol & Turnover \\
 \midrule
-R1: LR      & $-$0.145 & 0.187 & 1.940 & 0.285 & 0.454 \\
+R1/R3: LR$^{\dagger}$ & $-$0.145 & 0.187 & 1.940 & 0.285 & 0.454 \\
 R2: DSR     &   0.210  & 0.234 & 1.726 & 0.311 & 0.779 \\
-R3: LR+TC   & $-$0.145 & 0.187 & 1.940 & 0.285 & 0.454 \\
 R4: DSR+TC  & \textbf{0.525} & 0.267 & 1.922 & 0.354 & 0.629 \\
 \midrule
 \multicolumn{6}{l}{\small Bull: 663 days (2023--2024). Bear: 89 days (2022).} \\
+\multicolumn{6}{l}{\small $^{\dagger}$Single configuration; see note to
+Table~\ref{tab:real_ablation}.} \\
 \bottomrule
 \end{tabular}}
 \end{table}
 
-Two regime-specific failure modes are evident. First, all log-return
-agents (R1, R3) achieve \emph{negative} bull-market Sharpe ($-$0.145),
+Two regime-specific failure modes are evident. First, the log-return
+agent achieves a \emph{negative} bull-market Sharpe ($-$0.145),
 indicating that maximizing raw log-return causes the agent to chase
 volatile momentum signals that reverse in sustained uptrends. Second,
 DSR+TC's bull-regime volatility (0.267) is 43\% higher than LR's
@@ -2227,51 +2306,52 @@ The RSMO null result carries several important implications:
 \section{Conclusion}
 \label{sec:conclusion}
 
-We presented a systematic four-way ablation study of reward function
-design for PPO-based portfolio optimization, evaluated on both a
-two-regime synthetic GBM market and ten liquid S\&P~500 constituents
-(2022--2024). On synthetic data, DSR+TC achieves the lowest cross-seed
-Sharpe std of \textbf{0.097}—a 39.4\% improvement over the best
-competing formulation—while also reducing turnover 36.9\% versus
-DSR-only. On real S\&P~500 data, DSR+TC achieves the highest mean DRL
-Sharpe (0.451), the highest cumulative return (44.5\%), and the only
-positive bull-market Sharpe (0.525) among DRL agents, but its
-cross-seed stability advantage does not transfer: LR and LR+TC (std
-= 0.365 each) are more consistent on real data.
+We presented a reward-design study for PPO-based portfolio optimization
+spanning 930 training runs, a two-regime synthetic GBM market, and ten
+liquid S\&P~500 constituents evaluated on two disjoint out-of-sample
+periods (2022--2024 and 2025--2026). The headline result is negative in
+the most useful sense: \emph{no reward formulation dominates across
+market regimes}, and several advantages that appear decisive at small
+sample sizes do not survive replication.
 
-This divergence between synthetic and real stability rankings is itself
-a scientific contribution: it shows that EMA-based reward signals are
-environment-sensitive, and that synthetic benchmark results should be
-validated on real data before drawing strong conclusions about training
-stability. DSR alone (R2) is uniformly the worst formulation—collapsing
-completely on real data (std = 0.830)—confirming that transaction cost
-penalization is an essential stabilizer regardless of market type.
+On synthetic data, DSR+TC attains the lowest cross-seed Sharpe std
+(0.097 vs.\ 0.431 for LR+TC) and reduces turnover by 68.8\% versus
+DSR-only. We emphasise, however, that this comparison rests on $n=3$
+seeds per configuration. The large-$n$ experiments reported in
+Sections~\ref{sec:landscape}--\ref{sec:rsmo} show that differences of
+this magnitude are not reliably distinguishable from seed noise on real
+data, and we therefore treat the synthetic ablation as motivating rather
+than conclusive. Readers should weight the $n\geq40$ results
+accordingly.
 
-Three mechanistic follow-up studies are reported in
+Three findings are robust. First, transaction-cost \emph{magnitude}
+dominates transaction-cost \emph{presence}: across a four-level sweep at
+$n=40$ seeds, mean Sharpe declines monotonically from $0.455$
+($\lambda=0.001$) to $-0.073$ ($\lambda=0.050$), with the
+$\lambda=0.010$ comparison reaching Cohen $d=-1.05$ ($p<0.001$, power
+$>0.99$)---the strongest signal among the DSR+TC hyperparameter
+sweeps. High TC
+penalties produce overconstrained, near-passive policies whose bimodal
+outcomes inflate cross-seed variance. Second, the configuration that
+grid search nominates as optimal is a winner's curse, its advantage
+decaying monotonically ($d=+0.51 \to +0.30 \to +0.17$) as $n$ grows from
+10 to 150 without ever reaching significance. Third, the ranking of
+reward functions is regime-conditional and reverses out of sample.
+
+The supporting mechanistic studies are reported in
 Sections~\ref{subsec:adaptive_eta}, \ref{subsec:tc_sweep},
 and~\ref{subsec:grid_search}.
-First, the adaptive $\eta$ schedule
+The adaptive $\eta$ schedule
 ($\eta_t = \eta_0/(1+\kappa\hat{\sigma}_t)$) evaluated at $n=40$
 seeds shows no improvement over fixed DSR+TC ($p>0.69$, $|d|<0.10$);
 positive signals at smaller $n$ were sampling artifacts of the
 high cross-seed variance of real-market Sharpe distributions.
-Second, a four-level TC penalty sweep
-($\lambda \in \{0.001, 0.005, 0.01, 0.05\}$, $n=40$ each)
-reveals that TC \emph{magnitude} is the dominant driver of both
-mean performance and cross-seed stability. Mean Sharpe declines
-monotonically from $0.455$ ($\lambda=0.001$) to $-0.073$
-($\lambda=0.050$); the $\lambda=0.010$ vs.\ baseline comparison
-achieves Cohen $d=-1.05$ ($p<0.001$, power $>0.99$)---the
-strongest statistical signal in this study. Higher TC penalties
-produce overconstrained policies that converge to near-passive
-buy-and-hold, with bimodal outcomes that dramatically inflate
-cross-seed variance.
-Third, a $4\times 5$ joint grid search over
+A $4\times 5$ joint grid search over
 $(\lambda, \eta_0)$ ($n=10$ seeds per cell, 20 cells)
 identifies $(\lambda=0.0005,\,\eta_0=0.020)$ as the mean-optimal
 configuration ($\bar{S}=0.655$, 31\% above baseline at $n=10$) and
 $(\lambda=0.002,\,\eta_0=0.002)$ as the IR-optimal cell
-(IR$=4.26$, std$=0.112$ at $n=10$). Fourth, a confirmatory $n=50$
+(IR$=4.26$, std$=0.112$ at $n=10$). A confirmatory $n=50$
 expansion of the IR-optimal cell (EXP-16,
 Section~\ref{subsec:confirm_stability}) finds that the stability
 advantage was a small-sample artifact: at $n=50$ the target cell
