@@ -1,4 +1,4 @@
-# Reward Function Design for Deep RL Portfolio Optimization
+# Reward Function Design for Deep RL Portfolio Optimization for finance
 
 [![Paper](https://img.shields.io/badge/Paper-PDF%20%2820%20pages%29-blue?logo=adobeacrobatreader)](paper.pdf)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
